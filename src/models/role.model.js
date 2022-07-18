@@ -1,4 +1,7 @@
 module.exports = (sequelize, Sequelize) => {
+
+    const options = { timestamps: false };
+
     const Role = sequelize.define("roles", {
       id: {
         type: Sequelize.INTEGER,
@@ -7,6 +10,7 @@ module.exports = (sequelize, Sequelize) => {
       name: {
         type: Sequelize.STRING
       }
-    });
+    }, options );
+    
     return Role;
   };
