@@ -29,7 +29,7 @@ module.exports = (sequelize, Sequelize) => {
   });
 
   // MODEL category of product
-  const category = sequelize.define("categorys", {
+  const category = sequelize.define("categories", {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
