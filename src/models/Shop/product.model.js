@@ -1,13 +1,13 @@
 const Sequelize = require("sequelize");
 module.exports = (sequelize, Sequelize) => {
-  // MODEL Producto
-  const producto = sequelize.define("productos", {
+  // MODEL Product
+  const product = sequelize.define("products", {
     sku: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    nombre: {
+    name: {
       type: Sequelize.STRING,
       allowNull: false,
     },
@@ -15,28 +15,28 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.DOUBLE,
       allowNull: false,
     },
-    cantidad: {
+    stock: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
     },
-    descripcion: {
+    description: {
       type: Sequelize.TEXT,
       allowNull: false,
     },
-    informacion_add: {
+    additional_information: {
       type: Sequelize.TEXT,
     },
   });
 
-  // MODEL Categoria de productos
-  const categoria = sequelize.define("categorias", {
-    nombre: {
+  // MODEL category of product
+  const category = sequelize.define("categorys", {
+    name: {
       type: Sequelize.STRING,
       allowNull: false,
     },
   });
 
-  // MODEL Etiquetas asociada a los productos
+  // MODEL Etiquetas asociada a los product
   const tag = sequelize.define("tags", {
     tag_name: {
       type: Sequelize.STRING,
@@ -44,8 +44,8 @@ module.exports = (sequelize, Sequelize) => {
     },
   });
 
-  // MODEL Imagen asociada a los productos
-  const imagen = sequelize.define("imagenes", {
+  // MODEL Imagen asociada a los product
+  const image = sequelize.define("images", {
     url: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -55,9 +55,9 @@ module.exports = (sequelize, Sequelize) => {
     },
   });
 
-  // MODEL Valoracion asociada a los productos
+  // MODEL Valoracion asociada a los product
   const valoracion = sequelize.define("valoraciones", {
-    estrellas: {
+    stars: {
       type: Sequelize.INTEGER,
       allowNull: false,
       validate: {
@@ -65,49 +65,49 @@ module.exports = (sequelize, Sequelize) => {
         min: 1,
       },
     },
-    comentario: {
+    comment: {
       type: Sequelize.TEXT,
     },
   });
 
   // ******  RELACIONES entre Modelos ***********
 
-  // relacion de producto - tags
-  producto.belongsToMany(tag, {
-    through: "producto_tags",
+  // relacion de product - tags
+  product.belongsToMany(tag, {
+    through: "product_tags",
     foreignKey: "skuId",
     otherKey: "tagId",
   });
 
-  tag.belongsToMany(producto, {
-    through: "producto_tags",
+  tag.belongsToMany(product, {
+    through: "product_tags",
     foreignKey: "tagId",
     otherKey: "skuId",
   });
 
-  // relacion producto - categoria
-  categoria.hasMany(producto, {
-    foreignKey: "categoriaId",
+  // relacion product - categoria
+  category.hasMany(product, {
+    foreignKey: "categoryId",
   });
-  producto.belongsTo(categoria);
+  product.belongsTo(category);
 
-  // relacion producto - imagenes
-  producto.hasMany(imagen, {
-    foreignKey: "productoSku",
+  // relacion product - imagenes
+  product.hasMany(image, {
+    foreignKey: "productSku",
   });
-  imagen.belongsTo(producto);
+  image.belongsTo(product);
 
-  // relacion producto - valoracion
-  producto.hasMany(valoracion, {
-    foreignKey: "productoSku",
+  // relacion product - valoracion
+  product.hasMany(valoracion, {
+    foreignKey: "productSku",
   });
-  valoracion.belongsTo(producto);
+  valoracion.belongsTo(product);
 
   return {
-    producto,
-    categoria,
+    product,
+    category,
     tag,
-    imagen,
+    image,
     valoracion,
   };
 };
