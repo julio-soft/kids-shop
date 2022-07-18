@@ -1,0 +1,10 @@
+@host=http://localhost:3000/api
+
+
+POST {{host}}/auth/signin
+Content-Type: application/json
+
+{
+    "username": "jcgoza",
+    "password": "123"
+}
