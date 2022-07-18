@@ -93,13 +93,13 @@ module.exports = (sequelize, Sequelize) => {
 
   // relacion producto - imagenes
   producto.hasMany(imagen, {
-    foreignKey: "productoId",
+    foreignKey: "productoSku",
   });
   imagen.belongsTo(producto);
 
   // relacion producto - valoracion
   producto.hasMany(valoracion, {
-    foreignKey: "productoId",
+    foreignKey: "productoSku",
   });
   valoracion.belongsTo(producto);
 
