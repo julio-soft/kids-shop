@@ -5,11 +5,6 @@ const logger = require('morgan');
 // express app
 const app = express();
 
-// routes
-const indexRouter = require('./src/routes/index');
-const usersRouter = require('./src/routes/users');
-
-
 var corsOptions = {
     origin: "http://localhost:8081"
 };
@@ -24,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // using routes
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+const routes = require('./src/routes')
+app.use('/api',routes)
 
 module.exports = app;
