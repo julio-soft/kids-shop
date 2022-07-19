@@ -3,7 +3,7 @@ const config = require("../config/auth.config.js");
 const db = require("../models");
 const User = db.user;
 
-verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
   if (!token) {
     return res.status(403).send({
@@ -21,7 +21,7 @@ verifyToken = (req, res, next) => {
   });
 };
 
-isAdmin = async (req, res, next) => {
+const isAdmin = async (req, res, next) => {
   let { user } = await User.findByPk(req.userId);
   let { roles } = await user.getRoles();
   for (let i = 0; i < roles.length; i++) {
@@ -34,42 +34,39 @@ isAdmin = async (req, res, next) => {
   return;
 };
 
-isModerator = (req, res, next) => {
-  User.findByPk(req.userId).then((user) => {
-    user.getRoles().then((roles) => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "moderator") {
-          next();
-          return;
-        }
-      }
-      res.status(403).send({
-        message: "Require Moderator Role!",
-      });
-    });
+const isModerator = async (req, res, next) => {
+  const user = await User.findByPk(req.userId);
+
+  const roles = await user.getRoles();
+  for (let i = 0; i < roles.length; i++) {
+    if (roles[i].name === "moderator") {
+      next();
+      return;
+    }
+  }
+  res.status(403).send({
+    message: "Require Moderator Role!",
   });
 };
 
-isModeratorOrAdmin = (req, res, next) => {
-  User.findByPk(req.userId).then((user) => {
-    user.getRoles().then((roles) => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "moderator") {
-          next();
-          return;
-        }
-        if (roles[i].name === "admin") {
-          next();
-          return;
-        }
-      }
-      res.status(403).send({
-        message: "Require Moderator or Admin Role!",
-      });
-    });
+const isModeratorOrAdmin = async (req, res, next) => {
+  const user = await User.findByPk(req.userId);
+
+  const roles = await user.getRoles();
+  for (let i = 0; i < roles.length; i++) {
+    if (roles[i].name === "moderator") {
+      next();
+      return;
+    }
+    if (roles[i].name === "admin") {
+      next();
+      return;
+    }
+  }
+  res.status(403).send({
+    message: "Require Moderator or Admin Role!",
   });
 };
-
 
 const authJwt = {
   verifyToken: verifyToken,
