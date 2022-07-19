@@ -1,5 +1,5 @@
 const { authJwt, headers } = require("../middleware");
-const controller = require("../controllers/category.controller");
+const controller = require("../controllers/shop/category.controller");
 
 var express = require("express");
 var router = express.Router();
@@ -8,18 +8,21 @@ var router = express.Router();
 router.use(headers.AllowHeader);
 
 // verb
-router.get("/all", controller.allAccess);
-router.get("/user", [authJwt.verifyToken], controller.userBoard);
-router.get(
-  "/mod",
+router.post("/", [authJwt.verifyToken, authJwt.isModerator], controller.create);
+router.delete(
+  "/",
   [authJwt.verifyToken, authJwt.isModerator],
-  controller.moderatorBoard
+  controller.delete
 );
-router.get(
-  "/admin",
-  [authJwt.verifyToken, authJwt.isAdmin],
-  controller.adminBoard
+router.put("/", [authJwt.verifyToken, authJwt.isModerator], controller.update);
+router.patch(
+  "/",
+  [authJwt.verifyToken, authJwt.isModerator],
+  controller.update
 );
+
+router.get("/:id", controller.findOne);
+router.get("/", controller.findAll);
 
 // export
 module.exports = router;
