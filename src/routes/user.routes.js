@@ -31,4 +31,4 @@ router.get(
 );
 
 // export
-module.exports = router
+module.exports = router;

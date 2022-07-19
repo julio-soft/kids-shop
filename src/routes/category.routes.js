@@ -8,18 +8,10 @@ var router = express.Router();
 router.use(headers.AllowHeader);
 
 // verb
-router.post("/", [authJwt.verifyToken, authJwt.isModerator], controller.create);
-router.delete(
-  "/",
-  [authJwt.verifyToken, authJwt.isModerator],
-  controller.delete
-);
-router.put("/", [authJwt.verifyToken, authJwt.isModerator], controller.update);
-router.patch(
-  "/",
-  [authJwt.verifyToken, authJwt.isModerator],
-  controller.update
-);
+router.post("/", [authJwt.isModeratorOrAdmin], controller.create);
+router.delete("/", [authJwt.isModeratorOrAdmin], controller.delete);
+router.put("/", [authJwt.isModeratorOrAdmin], controller.update);
+router.patch("/", [authJwt.isModeratorOrAdmin], controller.update);
 
 router.get("/:id", controller.findOne);
 router.get("/", controller.findAll);
