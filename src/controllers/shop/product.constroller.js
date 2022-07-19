@@ -29,21 +29,34 @@ exports.create = async (req, res) => {
     // Save Product in the database
     const t = await sequelize.transaction();
 
-    const data = await Product.create(Product);
+    const data = await Product.create(Product, {
+      fields: [
+        "name",
+        "price",
+        "stock",
+        "description",
+        "additional_information",
+      ],
+    });
 
     const categoryResponse = await Category.findByPk(category);
     if (categoryResponse) data.setCategory(categoryResponse); // linking categories
-    if (image) data.createImage(image); // creating and linking categories
+
+    if (image) {
+      image.forEach((element) => {
+        data.createImage({ ...element }); // creating and linking image
+      });
+    }
 
     tagResponse = Tag.findAll({
       where: {
         id: tags,
       },
     });
-    if (tags) category.addTag(tagResponse); // linking
+    if (tags) category.addTags(tagResponse); // linking
 
     await t.commit();
-    
+
     res.send(data);
   } catch (error) {
     await t.rollback();
@@ -176,7 +189,7 @@ exports.update_stock = async (req, res) => {
     } else if (req.body.decrease) {
       product.stock -= decrease;
     }
-    
+
     await product.save({ transaction: t });
 
     await t.commit();
