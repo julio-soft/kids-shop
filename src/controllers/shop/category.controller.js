@@ -61,7 +61,7 @@ exports.findOne = async (req, res) => {
 
 // Update a Category by the id in the request
 exports.update = async (req, res) => {
-  const id = req.params.id;
+  const id = req.body.id;
 
   try {
     const category = await Category.findByPk(id);

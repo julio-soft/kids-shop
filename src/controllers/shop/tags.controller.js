@@ -2,7 +2,7 @@ const db = require("../../models");
 const Tag = db.shop.tag;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Tag
+// CREATE and Save a new Tag
 exports.create = async (req, res) => {
   // Validate request
   if (!req.body.name) {
@@ -61,7 +61,7 @@ exports.findOne = async (req, res) => {
 
 // Update a Tag by the id in the request
 exports.update = async (req, res) => {
-  const id = req.params.id;
+  const id = req.body.id;
 
   try {
     const tag = await Tag.findByPk(id);
