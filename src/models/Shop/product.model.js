@@ -51,6 +51,7 @@ module.exports = (sequelize, Sequelize) => {
     url: {
       type: Sequelize.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: true, // string no vacio
       },
