@@ -64,14 +64,14 @@ exports.update = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const Tag = await Tag.findByPk(id);
+    const tag = await Tag.findByPk(id);
 
-    if (Tag == null)
+    if (tag == null)
       res.send({
         message: `Cannot update Tag with id=${id}. Maybe Tag was not found or req.body is empty!`,
       });
 
-    Tag.set(req.body);
+    tag.set(req.body);
     await Tag.save({ fields: ["name"] }); // save fields that can be mutated
 
     res.send({
