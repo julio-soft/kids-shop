@@ -2,9 +2,11 @@ var app = require("./server");
 const db = require("./src/models");
 const initial = require("./src/models/init");
 
-db.sequelize.sync({ force: true }).then(() => {
+console.log("Synchronizing Model.");
+db.sequelize.sync({ force: true }).then(async () => {
   console.log("All models were synchronized successfully.");
-  initial();
+  console.log("Setting initial data.");
+  await initial();
   console.log("All initial data were inserted successfully.");
 
   const PORT = process.env.PORT || 3000;
