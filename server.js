@@ -20,6 +20,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // using routes
 const routes = require('./src/routes')
-app.use('/api',routes)
+app.use('/apiv1',routes)
 
 module.exports = app;
