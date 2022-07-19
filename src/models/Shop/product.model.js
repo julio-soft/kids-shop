@@ -33,14 +33,16 @@ module.exports = (sequelize, Sequelize) => {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
+      unique: true,
     },
   });
 
   // MODEL Etiquetas asociada a los product
   const tag = sequelize.define("tags", {
-    tag_name: {
+    name: {
       type: Sequelize.STRING,
       allowNull: false,
+      unique: true,
     },
   });
 
