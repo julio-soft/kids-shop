@@ -6,7 +6,7 @@ const Op = db.Sequelize.Op;
 exports.create = async (req, res) => {
   // Validate request
   if (!req.body.name) {
-    res.status(400).send({
+    res.status(400).json({
       message: "Content can not be empty!",
     });
     return;
@@ -20,9 +20,9 @@ exports.create = async (req, res) => {
   try {
     // Save Tag in the database
     const data = await Tag.create(Tag);
-    res.send(data);
+    res.json(data);
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message:
         error.message || "Some error occurred while creating the Tag.",
     });
@@ -36,9 +36,9 @@ exports.findAll = async (req, res) => {
 
   try {
     const data = await Tag.findAll({ where: condition });
-    res.send(data);
+    res.json(data);
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message:
         error.message || "Some error occurred while retrieving categories.",
     });
@@ -51,9 +51,9 @@ exports.findOne = async (req, res) => {
 
   try {
     const data = await Tag.findByPk(id);
-    res.send(data);
+    res.json(data);
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message: "Error retrieving Tag with id=" + id,
     });
   }
@@ -67,18 +67,18 @@ exports.update = async (req, res) => {
     const tag = await Tag.findByPk(id);
 
     if (tag == null)
-      res.send({
+      res.json({
         message: `Cannot update Tag with id=${id}. Maybe Tag was not found or req.body is empty!`,
       });
 
     tag.set(req.body);
     await Tag.save({ fields: ["name"] }); // save fields that can be mutated
 
-    res.send({
+    res.json({
       message: "Tag was updated successfully.",
     });
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message: "Error updating Tag with id=" + id,
     });
   }
@@ -94,16 +94,16 @@ exports.delete = async (req, res) => {
     });
 
     if (resp == 1) {
-      res.send({
+      res.json({
         message: "Tag was deleted successfully!",
       });
     } else {
-      res.send({
+      res.json({
         message: `Cannot delete Tag with id=${id}. Maybe Tag was not found!`,
       });
     }
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message: "Could not delete Tag with id=" + id,
     });
   }
@@ -117,9 +117,9 @@ exports.deleteAll = async (req, res) => {
       truncate: false,
     });
 
-    res.send({ message: `${resp} Categories were deleted successfully!` });
+    res.json({ message: `${resp} Categories were deleted successfully!` });
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message:
         error.message || "Some error occurred while removing all Tag.",
     });

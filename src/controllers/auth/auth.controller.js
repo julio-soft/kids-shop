@@ -31,9 +31,9 @@ exports.signup = async (req, res) => {
       await user.setRoles([1]);
     }
 
-    res.send({ message: "User was registered successfully!" });
+    res.status(201).json({ message: "User was registered successfully!" });
   } catch (err) {
-    res.status(500).send({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -45,12 +45,12 @@ exports.signin = async (req, res) => {
       },
     });
 
-    if (!user) return res.status(404).send({ message: "User Not found." });
+    if (!user) return res.status(404).json({ message: "User Not found." });
 
     var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
 
     if (!passwordIsValid) {
-      return res.status(401).send({
+      return res.status(401).json({
         accessToken: null,
         message: "Invalid Password!",
       });
@@ -68,7 +68,7 @@ exports.signin = async (req, res) => {
       authorities.push("ROLE_" + roles[i].name.toUpperCase());
     }
 
-    res.status(200).send({
+    res.status(200).json({
       id: user.id,
       username: user.username,
       email: user.email,
@@ -76,6 +76,6 @@ exports.signin = async (req, res) => {
       accessToken: token,
     });
   } catch (error) {
-    res.status(500).send({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };

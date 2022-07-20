@@ -10,7 +10,7 @@ const Op = db.Sequelize.Op;
 exports.create = async (req, res) => {
   // Validate request
   if (!req.body.name) {
-    res.status(400).send({
+    res.status(400).json({
       message: "Content can not be empty!",
     });
     return;
@@ -57,10 +57,10 @@ exports.create = async (req, res) => {
 
     await t.commit();
 
-    res.send(data);
+    res.json(data);
   } catch (error) {
     await t.rollback();
-    res.status(500).send({
+    res.status(500).json({
       message:
         error.message || "Some error occurred while creating the Product.",
     });
@@ -117,9 +117,9 @@ exports.findAll = async (req, res) => {
 
   try {
     const data = await Product.findAndCountAll(condition);
-    res.send(data);
+    res.json(data);
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message:
         error.message || "Some error occurred while retrieving categories.",
     });
@@ -132,9 +132,9 @@ exports.findOne = async (req, res) => {
 
   try {
     const data = await Product.findByPk(id);
-    res.send(data);
+    res.json(data);
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message: "Error retrieving Product with id=" + id,
     });
   }
@@ -148,7 +148,7 @@ exports.update = async (req, res) => {
     const product = await Product.findByPk(id);
 
     if (product == null)
-      res.send({
+      res.json({
         message: `Cannot update Product with id=${id}. Maybe Product was not found or req.body is empty!`,
       });
 
@@ -157,11 +157,11 @@ exports.update = async (req, res) => {
       fields: ["name", "price", "description", "additional_information"],
     }); // save fields that can be mutated
 
-    res.send({
+    res.json({
       message: "Product was updated successfully.",
     });
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message: "Error updating Product with id=" + id,
     });
   }
@@ -180,7 +180,7 @@ exports.update_stock = async (req, res) => {
     const product = await Product.findByPk(id, { lock: true, transaction: t });
 
     if (product == null)
-      res.send({
+      res.json({
         message: `Cannot update Product with id=${id}. Maybe Product was not found or req.body is empty!`,
       });
 
@@ -194,12 +194,12 @@ exports.update_stock = async (req, res) => {
 
     await t.commit();
 
-    res.send({
+    res.json({
       message: "Product was updated successfully.",
     });
   } catch (error) {
     await t.rollback();
-    res.status(500).send({
+    res.status(500).json({
       message: "Error updating Product with id=" + id,
     });
   }
@@ -215,16 +215,16 @@ exports.delete = async (req, res) => {
     });
 
     if (resp == 1) {
-      res.send({
+      res.json({
         message: "Product was deleted successfully!",
       });
     } else {
-      res.send({
+      res.json({
         message: `Cannot delete Product with id=${id}. Maybe Product was not found!`,
       });
     }
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message: "Could not delete Product with id=" + id,
     });
   }
