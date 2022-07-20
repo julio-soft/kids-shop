@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "cross-env NODE_ENV=production node app.js",
-    "test": "cross-env NODE_ENV=test jest --verbose",
+    "test": "cross-env NODE_ENV=test jest --verbose --silent --runInBand",
     "debug": "cross-env NODE_ENV=development nodemon --inspect app.js"
   },
   "dependencies": {
