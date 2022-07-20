@@ -1,17 +1,16 @@
-const express = require('express');
+const express = require("express");
 const cors = require("cors");
-const logger = require('morgan');
+const logger = require("morgan");
 
 // express app
 const app = express();
 
 var corsOptions = {
-    origin: "http://localhost:8081"
+  origin: "http://localhost:8081",
 };
 
-
 // middleware
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -19,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // using routes
-const routes = require('./src/routes')
-app.use('/apiv1',routes)
+const routes = require("./src/routes");
+app.use("/apiv1", routes);
 
 module.exports = app;
