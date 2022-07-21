@@ -1,6 +1,6 @@
 // TEST UNITARIOS
 
-describe("Test UNITARIO a los modelos", () => {
+describe("UNIT TEST: Modelos", () => {
   test("Se Introdujo una etiqueta.", (done) => {
     done();
   });

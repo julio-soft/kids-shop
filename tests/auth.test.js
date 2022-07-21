@@ -19,7 +19,7 @@ afterAll(() => {
   // return db.sequelize.sync({ force: true });
 });
 
-describe("Test Authentication and Authorization and middleware", () => {
+describe("INTEGRATION TEST: Authentication and Authorization and middleware", () => {
   test("SignUp a new user", (done) => {
     request(app)
       .post("/apiv1/auth/signup")

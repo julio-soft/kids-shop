@@ -5,7 +5,7 @@ const app = require("../server");
 const db = require("../src/models");
 const initial = require("../src/models/init");
 
-// TEST de INTEGRACION
+// TEST de INTEGRATION
 
 beforeAll(() => {
   return db.sequelize.sync({ force: true }).then(async () => {
@@ -13,7 +13,7 @@ beforeAll(() => {
   });
 });
 
-describe("Test Product of de Shop", () => {
+describe("INTEGRATION TEST: Product of de Shop", () => {
   test("SignIn a user", (done) => {
     request(app)
       .post("/apiv1/auth/signin")
