@@ -79,7 +79,25 @@ exports.findOne = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const data = await Product.findByPk(id);
+    const data = await Product.findByPk(id, {
+      include: [
+        {
+          model: Image,
+        },
+        {
+          model: Category,
+          as: "category",
+          required: true,
+        },
+        {
+          model: Tag,
+          as: "tag",
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
     res.json(data);
   } catch (error) {
     res.status(500).json({
