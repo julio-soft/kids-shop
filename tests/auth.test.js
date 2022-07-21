@@ -5,7 +5,7 @@ const app = require("../server");
 const db = require("../src/models");
 const initial = require("../src/models/init");
 
-// TEST de INTEGRACION
+// INTEGRATION TEST
 
 // Applies to all tests in this file
 // this methodo will run before
