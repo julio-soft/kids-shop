@@ -162,4 +162,15 @@ async function initial_product() {
     await product_4.addTag([tags_3, tags_4]);
   }
 
+  let product_5 = await product.create({
+    name: "Pulover",
+    price: 20,
+    stock: 0,
+    description: "pulover muy duraderos.",
+    additional_information: "Esto es una informacion adicional.",
+  });
+
+  await product_5.setCategory(category_5);
+  await product_5.addTag([tags_3, tags_4]);
+
 }

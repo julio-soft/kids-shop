@@ -301,3 +301,43 @@ exports.findAllCount = async (req, res) => {
     });
   }
 };
+
+// List all sold Product
+exports.findNoStock = async (req, res) => {
+  // Filter
+  const filters = filterProduct(req.query);
+
+  debugger;
+  const condition = {
+    where: {
+      stock: 0,
+    },
+    include: [
+      {
+        model: Image,
+      },
+      {
+        model: Category,
+        as: "category",
+        required: true,
+      },
+      {
+        model: Tag,
+        as: "tag",
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+  };
+
+  try {
+    const data = await Product.findAll(condition);
+    res.json({soldOut: data});
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error.message || "Some error occurred while retrieving categories.",
+    });
+  }
+};
