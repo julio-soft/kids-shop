@@ -7,14 +7,13 @@ const initial = require("../src/models/init");
 
 // INTEGRATION TEST
 
-beforeAll(() => {
-  return db.sequelize.sync({ force: true }).then(async () => {
-    await initial();
-  });
+beforeAll(async () => {
+  await db.sequelize.sync({ force: true });
+  await initial();
 });
 
-afterAll(() => {
-  return db.sequelize.close();
+afterAll(async () => {
+  await db.sequelize.close();
 });
 
 describe("INTEGRATION TEST: Product of de Shop", () => {
