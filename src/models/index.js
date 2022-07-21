@@ -38,6 +38,24 @@ db.user.belongsToMany(db.role, {
 });
 
 db.shop = require("./Shop/product.model")(sequelize, Sequelize);
+db.shop.sele = require("./Shop/sele.model")(sequelize, Sequelize);
+
+// relacion product - sele
+db.shop.product.hasMany(db.shop.sele, {
+  foreignKey: "productSku",
+});
+
+db.shop.sele.belongsTo(db.shop.product);
+
+
+// relacion user - sele
+db.user.hasMany(db.shop.sele, {
+  foreignKey: "productSku",
+});
+
+db.shop.sele.belongsTo(db.user);
+
+
 
 db.ROLES = ["user", "admin", "moderator"];
 

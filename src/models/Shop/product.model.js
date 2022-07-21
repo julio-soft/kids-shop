@@ -1,4 +1,4 @@
-const Sequelize = require("sequelize");
+
 module.exports = (sequelize, Sequelize) => {
   // MODEL Product
   const product = sequelize.define("products", {
