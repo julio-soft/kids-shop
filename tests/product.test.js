@@ -7,46 +7,20 @@ const initial = require("../src/models/init");
 
 // TEST de INTEGRACION
 
-// Applies to all tests in this file
-// this methodo will run before
 beforeAll(() => {
   return db.sequelize.sync({ force: true }).then(async () => {
     await initial();
   });
 });
 
-afterAll(() => {
-  // return db.sequelize.sync({ force: true });
-});
-
-describe("Test Authentication and Authorization and middleware", () => {
-  test("SignUp a new user", (done) => {
-    request(app)
-      .post("/apiv1/auth/signup")
-      .expect("Content-Type", /json/)
-      .send({
-        username: "julio",
-        email: "julio@gmail.com",
-        password: "123",
-        roles: ["user"],
-      })
-      .expect(201)
-      .expect((res) => {
-        res.body.message = "User was registered successfully!";
-      })
-      .end((err, res) => {
-        if (err) return done(err);
-        return done();
-      });
-  });
-
+describe("Test Product of de Shop", () => {
   test("SignIn a user", (done) => {
     request(app)
       .post("/apiv1/auth/signin")
       .expect("Content-Type", /json/)
       .send({
-        username: "julio",
-        password: "123",
+        username: "admin",
+        password: "admin",
       })
       .expect(200)
       .expect((res) => {
@@ -62,12 +36,14 @@ describe("Test Authentication and Authorization and middleware", () => {
       });
   });
 
-  test("Path open without authentication", (done) => {
+  test("All product", (done) => {
     request(app)
-      .get("/apiv1/test/all")
+      .get("/apiv1/product/")
+      .set("x-access-token", token)
       .expect("Content-Type", /json/)
-      .expect(200, {
-        message: "Public Content.",
+      .expect(200)
+      .expect((res) => {
+        if (!(res.body.length == 19)) throw new Error("missing next key");
       })
       .end((err, res) => {
         if (err) return done(err);
@@ -75,7 +51,7 @@ describe("Test Authentication and Authorization and middleware", () => {
       });
   });
 
-  test("Authenticated client can access to user url", (done) => {
+  test("Authenticated client can access to User url", (done) => {
     request(app)
       .get("/apiv1/test/user")
       .set("x-access-token", token)
