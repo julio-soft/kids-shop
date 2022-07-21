@@ -136,7 +136,7 @@ exports.update_stock = async (req, res) => {
       product.stock += increase;
     } else if (req.body.decrease) {
       product.stock -= decrease;
-      if (product.stock <= 0)
+      if (product.stock < 0)
         return res
           .status(500)
           .json({ message: "Cant decrease product stock!" });
