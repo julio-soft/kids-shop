@@ -237,3 +237,48 @@ exports.delete = async (req, res) => {
     });
   }
 };
+
+// Count all Product from the database
+// that match by conditions passed by parameters
+exports.findAllCount = async (req, res) => {
+  // Filter
+  console.log("asdasdas");
+  const filters = filterProduct(req.query);
+
+  debugger;
+  const condition = {
+    where: {
+      ...filters,
+    },
+    distinct: true, // count without include
+    include: [
+      {
+        model: Image,
+      },
+      {
+        model: Category,
+        as: "category",
+        required: true,
+      },
+      {
+        model: Tag,
+        as: "tag",
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+  };
+
+  try {
+    const data = await Product.count(condition);
+    res.json({
+      count: data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error.message || "Some error occurred while retrieving categories.",
+    });
+  }
+};

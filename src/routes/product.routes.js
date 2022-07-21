@@ -14,6 +14,7 @@ router.put("/", [authJwt.isModeratorOrAdmin], controller.update);
 router.patch("/", [authJwt.isModeratorOrAdmin], controller.update);
 router.patch("/stock", [authJwt.isModeratorOrAdmin], controller.update_stock);
 
+router.get("/count", controller.findAllCount);
 router.get("/:id", controller.findOne);
 router.get("/", controller.findAll);
 
