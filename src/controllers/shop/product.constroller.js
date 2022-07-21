@@ -74,6 +74,115 @@ exports.create = async (req, res) => {
   }
 };
 
+// Find a single Product with an id
+exports.findOne = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const data = await Product.findByPk(id);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error retrieving Product with id=" + id,
+    });
+  }
+};
+
+// Update a Product by the id in the request
+exports.update = async (req, res) => {
+  const id = req.body.sku;
+
+  try {
+    const product = await Product.findByPk(id);
+
+    if (product == null)
+      res.json({
+        message: `Cannot update Product with id=${id}. Maybe Product was not found or req.body is empty!`,
+      });
+
+    product.set(req.body);
+    await product.save({
+      fields: ["name", "price", "description", "additional_information"],
+    }); // save fields that can be mutated
+
+    res.json({
+      message: "Product was updated successfully.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error?.original?.message || error?.message || "Some error occurred.",
+    });
+  }
+};
+
+// This provides a SAFE way to UPDATE the STOCK of a product
+exports.update_stock = async (req, res) => {
+  const id = req.body.sku;
+  const increase = req.body.increase;
+  const decrease = req.body.decrease;
+
+  // update with a transaction and lock for security and consistency
+  const t = await sequelize.transaction();
+  try {
+    const product = await Product.findByPk(id, { lock: true, transaction: t });
+
+    if (product == null)
+      res.json({
+        message: `Cannot update Product with id=${id}. Maybe Product was not found or req.body is empty!`,
+      });
+
+    if (increase) {
+      product.stock += increase;
+    } else if (req.body.decrease) {
+      product.stock -= decrease;
+      if (product.stock <= 0)
+        return res
+          .status(500)
+          .json({ message: "Cant decrease product stock!" });
+    }
+
+    await product.save({ transaction: t });
+
+    await t.commit();
+
+    res.json({
+      message: "Product was updated successfully.",
+    });
+  } catch (error) {
+    await t.rollback();
+    res.status(500).json({
+      message:
+        error?.original?.message || error?.message || "Some error occurred.",
+    });
+  }
+};
+
+// Delete a Product with the specified id in the request
+exports.delete = async (req, res) => {
+  const sku = req.params.id;
+
+  try {
+    const resp = await Product.destroy({
+      where: { sku: sku },
+    });
+
+    if (resp == 1) {
+      res.json({
+        message: "Product was deleted successfully!",
+      });
+    } else {
+      res.json({
+        message: `Cannot delete Product with sku=${sku}. Maybe Product was not found!`,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Could not delete Product with id=" + sku,
+    });
+  }
+};
+
 // Retrieve all Product from the database.
 // also filters by conditions passed by parameters
 // pagination included if specified
@@ -124,120 +233,6 @@ exports.findAll = async (req, res) => {
     res.status(500).json({
       message:
         error.message || "Some error occurred while retrieving categories.",
-    });
-  }
-};
-
-// Find a single Product with an id
-exports.findOne = async (req, res) => {
-  const id = req.params.id;
-
-  try {
-    const data = await Product.findByPk(id);
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({
-      message: "Error retrieving Product with id=" + id,
-    });
-  }
-};
-
-// Update a Product by the id in the request
-exports.update = async (req, res) => {
-  const id = req.body.sku;
-
-  try {
-    const product = await Product.findByPk(id);
-
-    if (product == null)
-      res.json({
-        message: `Cannot update Product with id=${id}. Maybe Product was not found or req.body is empty!`,
-      });
-
-    product.set(req.body);
-    await product.save({
-      fields: ["name", "price", "description", "additional_information"],
-    }); // save fields that can be mutated
-
-    res.json({
-      message: "Product was updated successfully.",
-    });
-  } catch (error) {
-    res.status(500).json({
-      message:
-        error?.original?.message ||
-        error?.message ||
-        "Some error occurred.",
-    });
-  }
-};
-
-// This provides a SAFE way to UPDATE the STOCK of a product
-exports.update_stock = async (req, res) => {
-  const id = req.body.sku;
-  const increase = req.body.increase;
-  const decrease = req.body.decrease;
-
-  // update with a transaction and lock for security and consistency
-  const t = await sequelize.transaction();
-  try {
-    const product = await Product.findByPk(id, { lock: true, transaction: t });
-
-    if (product == null)
-      res.json({
-        message: `Cannot update Product with id=${id}. Maybe Product was not found or req.body is empty!`,
-      });
-
-    if (increase) {
-      product.stock += increase;
-    } else if (req.body.decrease) {
-      if(product.stock == 0) return res.status(500).json({message: "Cant decrease becuse product stock is 0"})
-      product.stock -= decrease;
-      if (product.stock <= 0)
-        return res
-          .status(500)
-          .json({ message: "Cant decrease product stock!" });
-    }
-
-    await product.save({ transaction: t });
-
-    await t.commit();
-
-    res.json({
-      message: "Product was updated successfully.",
-    });
-  } catch (error) {
-    await t.rollback();
-    res.status(500).json({
-      message:
-        error?.original?.message ||
-        error?.message ||
-        "Some error occurred.",
-    });
-  }
-};
-
-// Delete a Product with the specified id in the request
-exports.delete = async (req, res) => {
-  const sku = req.params.id;
-
-  try {
-    const resp = await Product.destroy({
-      where: { sku: sku },
-    });
-
-    if (resp == 1) {
-      res.json({
-        message: "Product was deleted successfully!",
-      });
-    } else {
-      res.json({
-        message: `Cannot delete Product with sku=${sku}. Maybe Product was not found!`,
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      message: "Could not delete Product with id=" + sku,
     });
   }
 };
