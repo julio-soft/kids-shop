@@ -80,19 +80,22 @@ module.exports = (sequelize, Sequelize) => {
     through: "product_tags",
     foreignKey: "skuId",
     otherKey: "tagId",
+    as: "tag",
   });
 
   tag.belongsToMany(product, {
     through: "product_tags",
     foreignKey: "tagId",
     otherKey: "skuId",
+    as: "product",
   });
 
   // relacion product - categoria
   category.hasMany(product, {
     foreignKey: "categoryId",
+    as: "product",
   });
-  product.belongsTo(category);
+  product.belongsTo(category, { as: "category" });
 
   // relacion product - imagenes
   product.hasMany(image, {
@@ -103,8 +106,11 @@ module.exports = (sequelize, Sequelize) => {
   // relacion product - valoracion
   product.hasMany(valoracion, {
     foreignKey: "productSku",
+    as: "valoracion",
   });
-  valoracion.belongsTo(product);
+  valoracion.belongsTo(product, {
+    as: "valoracion",
+  });
 
   return {
     product,
