@@ -1,0 +1,30 @@
+@host=http://localhost:3000/apiv1
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjU4MzgwMTM1LCJleHAiOjE2NTgzODE5MzV9.3hiTPBdUpb06OpQLY3Kvs3ewslYKvvnYoh2dewR6yc8
+
+POST {{host}}/sell
+Content-Type: application/json
+x-access-token: {{token}}
+
+{
+    "sku": 2
+}
+
+
+###
+
+GET {{host}}/sell/all
+Content-Type: application/json
+x-access-token: {{token}}
+
+{
+}
+
+
+###
+
+GET {{host}}/sell/profit
+Content-Type: application/json
+x-access-token: {{token}}
+
+{
+}

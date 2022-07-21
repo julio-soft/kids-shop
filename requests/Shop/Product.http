@@ -1,5 +1,5 @@
 @host=http://localhost:3000/apiv1
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjU4MzYzODY3LCJleHAiOjE2NTgzNjU2Njd9.lTaBtbBnf4fBubkmZsfmtKYj_fWAn0-f45ic_Ss9Eo4
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjU4NDIzNDgzLCJleHAiOjE2NTg0MjUyODN9.dq8M2klnMSn11aA5Y6W2EjaUeN5EsbSOHQH6u00mOo0
 
 GET {{host}}/product
 ?page=1
@@ -27,8 +27,9 @@ x-access-token: {{token}}
 ###
 
 GET {{host}}/product/
-?page=3
-&pageSize=10
+?page=1
+&pageSize=5
+&name=short
 Content-Type: application/json
 x-access-token: {{token}}
 
@@ -50,8 +51,28 @@ x-access-token: {{token}}
 ### 
 
 
-GET {{host}}/product/
+GET {{host}}/product
 ?page=2
+Content-Type: application/json
+x-access-token: {{token}}
+
+{
+}
+
+###
+
+GET {{host}}/product/noStock
+Content-Type: application/json
+x-access-token: {{token}}
+
+{
+}
+
+### 
+
+
+GET {{host}}/product/count/
+?name=short
 Content-Type: application/json
 x-access-token: {{token}}
 
@@ -66,7 +87,6 @@ x-access-token: {{token}}
 
 {
     "name": "prodcuto pepe",
-    "price": "58",
     "stokc": "541",
     "description": "58"
 }
