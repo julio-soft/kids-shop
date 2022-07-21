@@ -111,7 +111,7 @@ exports.getPageOffset = (query) => {
   pagination.pageSize = query?.pageSize || 10; // pageSize 10 if not specifie
   pagination.pageSize *= 1;
   pagination.offset =
-    pagination.page && pagination.page * pagination.pageSize - 10;
+    pagination.page && pagination.page * pagination.pageSize - pagination.pageSize;
 
   return pagination;
 };
