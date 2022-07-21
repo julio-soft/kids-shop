@@ -5,6 +5,7 @@ const userRoute = require("./user.routes");
 const categoryRoute = require("./category.routes");
 const tagsRoute = require('./tags.routes')
 const ProductRoute = require('./product.routes')
+const SellRoute = require('./sell.routes')
  
 var express = require("express");
 var router = express.Router();
@@ -17,5 +18,6 @@ router.use(authJwt.verifyToken) // verify that the user is authenticated
 router.use("/category", categoryRoute)
 router.use("/tag", tagsRoute)
 router.use("/product", ProductRoute)
+router.use("/sell", SellRoute)
 
 module.exports = router;

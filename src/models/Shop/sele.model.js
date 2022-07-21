@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 module.exports = (sequelize, Sequelize) => {
   // MODEL Seles
   const sele = sequelize.define("seles", {
-    price: {
+    sale_price: {
       type: Sequelize.DOUBLE,
       allowNull: false,
     },

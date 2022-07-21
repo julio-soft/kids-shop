@@ -1,8 +1,12 @@
 const db = require("../../models");
 
 const sequelize = db.sequelize;
-const Sales = db.shop.sele;
+const Seles = db.shop.sele;
 const Product = db.shop.product;
+const Image = db.shop.image;
+const Category = db.shop.category;
+const Tag = db.shop.tag;
+const User = db.user;
 
 // Sell a Product
 exports.sell = async (req, res) => {
@@ -18,12 +22,20 @@ exports.sell = async (req, res) => {
         message: `Cannot sell Product with sku=${id}. Maybe Product was not found or req.body is empty!`,
       });
 
-    product.stock -= decrease;
+    product.stock -= 1;
 
     if (product.stock < 0)
       return res
         .status(500)
         .json({ message: "Can't sell. The product is sold out!" });
+
+    const sale = await Seles.create(
+      { sale_price: product.price },
+      { transaction: t }
+    );
+    await sale.setProduct(product, { transaction: t });
+    const user = await User.findByPk(req.userId);
+    await sale.setUser(user, { transaction: t });
 
     await product.save({ transaction: t });
 
@@ -41,3 +53,29 @@ exports.sell = async (req, res) => {
     });
   }
 };
+
+// List all product sold
+exports.seles = async (req, res) => {
+  try {
+    const data = await Seles.findAll({
+      attributes: ["sale_price"],
+      include: [
+        {
+          model: Product,
+        },
+      ],
+    });
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error.message || "Some error occurred while retrieving product sold.",
+    });
+  }
+};
+
+
+// Total profit of the product sold
+exports.profit = (req, res) => {
+
+}
