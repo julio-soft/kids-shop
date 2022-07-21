@@ -62,7 +62,7 @@ exports.create = async (req, res) => {
     }
 
     await t.commit();
-    res.json(data);
+    res.status(201).json(data);
   } catch (error) {
     await t.rollback();
     res.status(500).json({
@@ -114,7 +114,7 @@ exports.update = async (req, res) => {
     const product = await Product.findByPk(id);
 
     if (product == null)
-      res.json({
+      return res.status(400).json({
         message: `Cannot update Product with id=${id}. Maybe Product was not found or req.body is empty!`,
       });
 
@@ -145,19 +145,22 @@ exports.update_stock = async (req, res) => {
   try {
     const product = await Product.findByPk(id, { lock: true, transaction: t });
 
-    if (product == null)
-      res.json({
+    if (product == null) {
+      await t.rollback();
+      return res.status(400).json({
         message: `Cannot update Product with id=${id}. Maybe Product was not found or req.body is empty!`,
       });
+    }
 
     if (increase) {
       product.stock += increase;
     } else if (req.body.decrease) {
       product.stock -= decrease;
-      if (product.stock < 0)
-        return res
-          .status(500)
-          .json({ message: "Cant decrease product stock!" });
+    }
+
+    if (product.stock < 0) {
+      await t.rollback();
+      return res.status(500).json({ message: "Cant decrease product stock!" });
     }
 
     await product.save({ transaction: t });
@@ -190,7 +193,7 @@ exports.delete = async (req, res) => {
         message: "Product was deleted successfully!",
       });
     } else {
-      res.json({
+      res.status(400).json({
         message: `Cannot delete Product with sku=${sku}. Maybe Product was not found!`,
       });
     }

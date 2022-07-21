@@ -20,7 +20,7 @@ exports.create = async (req, res) => {
   try {
     // Save Category in the database
     const data = await Category.create(category);
-    res.json(data);
+    res.status(201).json(data);
   } catch (error) {
     res.status(500).json({
       message:
@@ -67,7 +67,7 @@ exports.update = async (req, res) => {
     const category = await Category.findByPk(id);
 
     if (category == null)
-      res.json({
+      res.status(400).json({
         message: `Cannot update Category with id=${id}. Maybe Category was not found or req.body is empty!`,
       });
 
@@ -98,7 +98,7 @@ exports.delete = async (req, res) => {
         message: "Category was deleted successfully!",
       });
     } else {
-      res.json({
+      res.status(400).json({
         message: `Cannot delete Category with id=${id}. Maybe Category was not found!`,
       });
     }

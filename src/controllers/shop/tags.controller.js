@@ -14,17 +14,16 @@ exports.create = async (req, res) => {
 
   // Create a Tag
   const tag = {
-    ...req.body
+    ...req.body,
   };
 
   try {
     // Save Tag in the database
     const data = await Tag.create(Tag);
-    res.json(data);
+    res.status(201).json(data);
   } catch (error) {
     res.status(500).json({
-      message:
-        error.message || "Some error occurred while creating the Tag.",
+      message: error.message || "Some error occurred while creating the Tag.",
     });
   }
 };
@@ -67,7 +66,7 @@ exports.update = async (req, res) => {
     const tag = await Tag.findByPk(id);
 
     if (tag == null)
-      res.json({
+      res.status(400).json({
         message: `Cannot update Tag with id=${id}. Maybe Tag was not found or req.body is empty!`,
       });
 
@@ -98,7 +97,7 @@ exports.delete = async (req, res) => {
         message: "Tag was deleted successfully!",
       });
     } else {
-      res.json({
+      res.status(400).json({
         message: `Cannot delete Tag with id=${id}. Maybe Tag was not found!`,
       });
     }
@@ -120,8 +119,7 @@ exports.deleteAll = async (req, res) => {
     res.json({ message: `${resp} Categories were deleted successfully!` });
   } catch (error) {
     res.status(500).json({
-      message:
-        error.message || "Some error occurred while removing all Tag.",
+      message: error.message || "Some error occurred while removing all Tag.",
     });
   }
 };
