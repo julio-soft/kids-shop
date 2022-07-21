@@ -55,6 +55,13 @@ exports.seles = async (req, res) => {
 };
 
 // Total profit of the product sold
-exports.profit = (req, res) => {
-  
+exports.profit = async (req, res) => {
+  try {
+    const profit = await Seles.sum("sale_price");
+    res.json({ profit: profit || 0 });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || "Some error occurred while retrieving data.",
+    });
+  }
 };

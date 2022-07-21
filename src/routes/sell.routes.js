@@ -10,6 +10,7 @@ router.use(headers.AllowHeader);
 // verb
 router.post("/", controller.sell);
 router.get("/all", controller.seles);
+router.get("/profit", controller.profit);
 
 // export
 module.exports = router;
