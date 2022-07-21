@@ -3,10 +3,9 @@ const db = require("../../models");
 const sequelize = db.sequelize;
 const Seles = db.shop.sele;
 const Product = db.shop.product;
-const Image = db.shop.image;
-const Category = db.shop.category;
-const Tag = db.shop.tag;
 const User = db.user;
+
+const { sell_product } = require("./helper");
 
 // Sell a Product
 exports.sell = async (req, res) => {
@@ -15,34 +14,15 @@ exports.sell = async (req, res) => {
   // SELL with a transaction and lock for security and consistency
   const t = await sequelize.transaction();
   try {
-    const product = await Product.findByPk(id, { lock: true, transaction: t });
+    const result = await sell_product(id, req.userId, t);
 
-    if (product == null)
-      res.json({
-        message: `Cannot sell Product with sku=${id}. Maybe Product was not found or req.body is empty!`,
-      });
-
-    product.stock -= 1;
-
-    if (product.stock < 0)
-      return res
-        .status(500)
-        .json({ message: "Can't sell. The product is sold out!" });
-
-    const sale = await Seles.create(
-      { sale_price: product.price },
-      { transaction: t }
-    );
-    await sale.setProduct(product, { transaction: t });
-    const user = await User.findByPk(req.userId);
-    await sale.setUser(user, { transaction: t });
-
-    await product.save({ transaction: t });
-
-    await t.commit();
+    if (result === true) {
     res.status(200).json({
       message: "Product was sell successfully.",
     });
+    } else {
+      res.status(400).json(result);
+    }
   } catch (error) {
     await t.rollback();
     res.status(500).json({

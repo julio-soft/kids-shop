@@ -3,6 +3,47 @@ const Op = db.Sequelize.Op;
 
 var squel = require("squel");
 
+const Seles = db.shop.sele;
+const Product = db.shop.product;
+const User = db.user;
+
+// Sell a Product
+exports.sell_product = async (id_product, id_user, t) => {
+  // SELL with a transaction and lock for security and consistency
+  const product = await Product.findByPk(id_product, {
+    lock: true,
+    transaction: t,
+  });
+
+  if (product == null) {
+    await t.rollback();
+    return {
+      message: `Cannot sell Product with sku=${id_product}. Maybe Product was not found or req.body is empty!`,
+    };
+  }
+
+  product.stock -= 1;
+
+  if (product.stock < 0) {
+    await t.rollback();
+    return { message: "Can't sell. The product is sold out!" };
+  }
+
+  const sale = await Seles.create(
+    { sale_price: product.price },
+    { transaction: t }
+  );
+  await sale.setProduct(product, { transaction: t });
+  const user = await User.findByPk(id_user);
+  await sale.setUser(user, { transaction: t });
+
+  await product.save({ transaction: t });
+
+  await t.commit();
+
+  return true;
+};
+
 exports.filterProduct = (query) => {
   const filters = {};
 
