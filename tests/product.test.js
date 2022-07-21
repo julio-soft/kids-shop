@@ -43,7 +43,12 @@ describe("INTEGRATION TEST: Product of de Shop", () => {
       .expect("Content-Type", /json/)
       .expect(200)
       .expect((res) => {
-        if (!(res.body.length == 19)) throw new Error("missing next key");
+        if (!(res.body.count == 20))
+          throw new Error(`Don't match. Value: ${res.body.count}`);
+        if (!(res.body.pageCount == 2))
+          throw new Error(`Don't match. Value: ${res.body.pageCount}`);
+        if (!(res.body.pageSize == 10))
+          throw new Error(`Don't match. Value: ${res.body.pageSize}`);
       })
       .end((err, res) => {
         if (err) return done(err);
@@ -51,27 +56,24 @@ describe("INTEGRATION TEST: Product of de Shop", () => {
       });
   });
 
-  test("Authenticated client can access to User url", (done) => {
+  test("Filter product", (done) => {
     request(app)
-      .get("/apiv1/test/user")
+      .get("/apiv1/product/")
       .set("x-access-token", token)
-      .expect("Content-Type", /json/)
-      .expect(200, {
-        message: "User Content.",
+      .query({
+        name: "short",
+        pageSize: 5,
+        page: 1,
       })
-      .end((err, res) => {
-        if (err) return done(err);
-        return done();
-      });
-  });
-
-  test("Authenticated client can't access to the staff url", (done) => {
-    request(app)
-      .get("/apiv1/test/mod")
-      .set("x-access-token", token)
       .expect("Content-Type", /json/)
-      .expect(403, {
-        message: "Require Moderator Role!",
+      .expect(200)
+      .expect((res) => {
+        if (!(res.body.count == 1))
+          throw new Error(`Don't match. Value: ${res.body.count}`);
+        if (!(res.body.pageCount == 1))
+          throw new Error(`Don't match. Value: ${res.body.pageCount}`);
+        if (!(res.body.pageSize == 5))
+          throw new Error(`Don't match. Value: ${res.body.pageSize}`);
       })
       .end((err, res) => {
         if (err) return done(err);
