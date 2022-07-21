@@ -1,4 +1,6 @@
 const db = require("../../models");
+const { filterProduct, getPageOffset, getPageCount } = require("./helper");
+
 const sequelize = db.sequelize;
 const Product = db.shop.product;
 const Image = db.shop.image;
@@ -21,15 +23,16 @@ exports.create = async (req, res) => {
     ...req.body,
   };
 
-  const image = req.body.image;
+  const images = req.body.images;
   const category = req.body.category;
   const tags = req.body.tags;
 
+  const t = await sequelize.transaction();
+
   try {
     // Save Product in the database
-    const t = await sequelize.transaction();
 
-    const data = await Product.create(Product, {
+    const data = await Product.create(product, {
       fields: [
         "name",
         "price",
@@ -42,27 +45,31 @@ exports.create = async (req, res) => {
     const categoryResponse = await Category.findByPk(category);
     if (categoryResponse) data.setCategory(categoryResponse); // linking categories
 
-    if (image) {
-      image.forEach((element) => {
-        data.createImage({ ...element }); // creating and linking image
-      });
+    if (images) {
+      for (let index = 0; index < images.length; index++) {
+        const element = images[index];
+        await data.createImage({ ...element }); // creating and linking image
+      }
     }
 
-    tagResponse = Tag.findAll({
-      where: {
-        id: tags,
-      },
-    });
-    if (tags) category.addTags(tagResponse); // linking
+    if (tags) {
+      tagResponse = await Tag.findAll({
+        where: {
+          id: tags,
+        },
+      });
+      data.addTag(tagResponse); // linking
+    }
 
     await t.commit();
-
     res.json(data);
   } catch (error) {
     await t.rollback();
     res.status(500).json({
       message:
-        error.message || "Some error occurred while creating the Product.",
+        error?.original?.message ||
+        error?.message ||
+        "Some error occurred while creating the Product.",
     });
   }
 };
@@ -71,53 +78,48 @@ exports.create = async (req, res) => {
 // also filters by conditions passed by parameters
 // pagination included if specified
 exports.findAll = async (req, res) => {
-  const filters = {};
+  // Filter
+  const filters = filterProduct(req.query);
 
-  if (req?.query?.sku) filters.sku = { [Op.eq]: req?.query?.sku };
-  if (req?.query?.name) filters.name = { [Op.like]: `%${req?.query?.name}%` };
-  if (req?.query?.price) filters.price = { [Op.eq]: req?.query?.price };
-  if (req?.query?.stock) filters.stock = { [Op.eq]: req?.query?.stock };
-
-  if (req?.query?.description)
-    filters.description = { [Op.like]: `%${req?.query?.description}%` };
-
-  if (req?.query?.additional_information)
-    filters.additional_information = {
-      [Op.like]: `%${req?.query?.additional_information}%`,
-    };
-
-  if (req?.query?.category)
-    filters["$Category.name$"] = { [Op.like]: `%${req?.query?.category}%` };
-  if (req?.query?.tags)
-    filters["$Tag.name$"] = { [Op.like]: `%${req?.query?.tags}%` };
-
-  const page = req?.query?.page || null; // pagination included if specified
-  const offset = page && page * 10 - 10;
+  // PAGUINATION
+  let { page, pageSize, offset } = getPageOffset(req.query);
 
   const condition = {
-    limit: 10,
-    offset,
+    limit: pageSize,
+    offset: offset,
     where: {
       ...filters,
     },
+    distinct: true, // count without include
     include: [
       {
         model: Image,
       },
       {
         model: Category,
-        as: "Category",
+        as: "category",
+        required: true,
       },
       {
         model: Tag,
-        as: "Tag",
+        as: "tag",
+        through: {
+          attributes: [],
+        },
       },
     ],
   };
 
   try {
     const data = await Product.findAndCountAll(condition);
-    res.json(data);
+
+    let pageCount = getPageCount(data.count, pageSize);
+    res.json({
+      page: page,
+      pageSize: pageSize,
+      pageCount,
+      ...data,
+    });
   } catch (error) {
     res.status(500).json({
       message:
@@ -142,7 +144,7 @@ exports.findOne = async (req, res) => {
 
 // Update a Product by the id in the request
 exports.update = async (req, res) => {
-  const id = req.body.id;
+  const id = req.body.sku;
 
   try {
     const product = await Product.findByPk(id);
@@ -162,21 +164,23 @@ exports.update = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: "Error updating Product with id=" + id,
+      message:
+        error?.original?.message ||
+        error?.message ||
+        "Some error occurred.",
     });
   }
 };
 
 // This provides a SAFE way to UPDATE the STOCK of a product
 exports.update_stock = async (req, res) => {
-  const id = req.body.id;
+  const id = req.body.sku;
   const increase = req.body.increase;
   const decrease = req.body.decrease;
 
+  // update with a transaction and lock for security and consistency
+  const t = await sequelize.transaction();
   try {
-    // update with a transaction and lock for security and consistency
-    const t = await sequelize.transaction();
-
     const product = await Product.findByPk(id, { lock: true, transaction: t });
 
     if (product == null)
@@ -187,6 +191,7 @@ exports.update_stock = async (req, res) => {
     if (increase) {
       product.stock += increase;
     } else if (req.body.decrease) {
+      if(product.stock == 0) return res.status(500).json({message: "Cant decrease becuse product stock is 0"})
       product.stock -= decrease;
     }
 
@@ -200,18 +205,21 @@ exports.update_stock = async (req, res) => {
   } catch (error) {
     await t.rollback();
     res.status(500).json({
-      message: "Error updating Product with id=" + id,
+      message:
+        error?.original?.message ||
+        error?.message ||
+        "Some error occurred.",
     });
   }
 };
 
 // Delete a Product with the specified id in the request
 exports.delete = async (req, res) => {
-  const id = req.params.id;
+  const sku = req.params.id;
 
   try {
     const resp = await Product.destroy({
-      where: { id: id },
+      where: { sku: sku },
     });
 
     if (resp == 1) {
@@ -220,12 +228,12 @@ exports.delete = async (req, res) => {
       });
     } else {
       res.json({
-        message: `Cannot delete Product with id=${id}. Maybe Product was not found!`,
+        message: `Cannot delete Product with sku=${sku}. Maybe Product was not found!`,
       });
     }
   } catch (error) {
     res.status(500).json({
-      message: "Could not delete Product with id=" + id,
+      message: "Could not delete Product with id=" + sku,
     });
   }
 };
