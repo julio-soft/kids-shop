@@ -193,6 +193,10 @@ exports.update_stock = async (req, res) => {
     } else if (req.body.decrease) {
       if(product.stock == 0) return res.status(500).json({message: "Cant decrease becuse product stock is 0"})
       product.stock -= decrease;
+      if (product.stock <= 0)
+        return res
+          .status(500)
+          .json({ message: "Cant decrease product stock!" });
     }
 
     await product.save({ transaction: t });
