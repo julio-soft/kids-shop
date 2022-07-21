@@ -12,25 +12,14 @@ exports.sell = async (req, res) => {
   const id = req.body.sku;
 
   // SELL with a transaction and lock for security and consistency
-  const t = await sequelize.transaction();
-  try {
-    const result = await sell_product(id, req.userId, t);
+  const result = await sell_product(id, req.userId);
 
-    if (result === true) {
-      res.status(200).json({
-        message: "Product was sell successfully.",
-      });
-    } else {
-      res.status(400).json(result);
-    }
-  } catch (error) {
-    await t.rollback();
-    res.status(500).json({
-      message:
-        error?.original?.message ||
-        error?.message ||
-        "Some error occurred while selling the Product.",
+  if (result === true) {
+    res.status(200).json({
+      message: "Product was sell successfully.",
     });
+  } else {
+    res.status(400).json(result);
   }
 };
 

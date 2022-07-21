@@ -8,42 +8,62 @@ const Product = db.shop.product;
 const User = db.user;
 
 // Sell a Product
-exports.sell_product = async (id_product, id_user, t) => {
+exports.sell_product = async (id_product, id_user) => {
   // SELL with a transaction and lock for security and consistency
-  const product = await Product.findByPk(id_product, {
-    lock: true,
-    transaction: t,
-  });
+  const t = await db.sequelize.transaction();
 
-  if (product == null) {
+  try {
+    // SELL with a transaction and lock for security and consistency
+    const product = await Product.findByPk(id_product, {
+      lock: true,
+      transaction: t,
+    });
+
+    const user = await User.findByPk(id_user);
+
+    if (user == null) {
+      throw new Error(
+        `Cannot sell Product to user id=${id_user}!`
+      );
+    }
+
+
+    if (product == null) {
+      throw new Error(
+        `Cannot sell Product with sku=${id_product}. Maybe Product was not found or req.body is empty!`
+      );
+    }
+
+    product.stock -= 1;
+
+    if (product.stock < 0) {
+      throw new Error("Can't sell. The product is sold out!");
+    }
+
+    const sale = await Seles.create(
+      { sale_price: product.price },
+      { transaction: t }
+    );
+    await sale.setProduct(product, { transaction: t });
+    await sale.setUser(user, { transaction: t });
+
+    await product.save({ transaction: t });
+
+    await t.commit();
+
+    return true;
+  } catch (error) {
     await t.rollback();
     return {
-      message: `Cannot sell Product with sku=${id_product}. Maybe Product was not found or req.body is empty!`,
+      message:
+        error?.original?.message ||
+        error?.message ||
+        "Some error occurred while selling the Product.",
     };
   }
-
-  product.stock -= 1;
-
-  if (product.stock < 0) {
-    await t.rollback();
-    return { message: "Can't sell. The product is sold out!" };
-  }
-
-  const sale = await Seles.create(
-    { sale_price: product.price },
-    { transaction: t }
-  );
-  await sale.setProduct(product, { transaction: t });
-  const user = await User.findByPk(id_user);
-  await sale.setUser(user, { transaction: t });
-
-  await product.save({ transaction: t });
-
-  await t.commit();
-
-  return true;
 };
 
+// Create a filter for Product
 exports.filterProduct = (query) => {
   const filters = {};
 
@@ -111,7 +131,8 @@ exports.getPageOffset = (query) => {
   pagination.pageSize = query?.pageSize || 10; // pageSize 10 if not specifie
   pagination.pageSize *= 1;
   pagination.offset =
-    pagination.page && pagination.page * pagination.pageSize - pagination.pageSize;
+    pagination.page &&
+    pagination.page * pagination.pageSize - pagination.pageSize;
 
   return pagination;
 };
