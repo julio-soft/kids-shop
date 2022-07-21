@@ -262,7 +262,6 @@ exports.findAll = async (req, res) => {
 // that match by conditions passed by parameters
 exports.findAllCount = async (req, res) => {
   // Filter
-  console.log("asdasdas");
   const filters = filterProduct(req.query);
 
   debugger;
