@@ -17,9 +17,9 @@ exports.sell = async (req, res) => {
     const result = await sell_product(id, req.userId, t);
 
     if (result === true) {
-    res.status(200).json({
-      message: "Product was sell successfully.",
-    });
+      res.status(200).json({
+        message: "Product was sell successfully.",
+      });
     } else {
       res.status(400).json(result);
     }
@@ -38,7 +38,7 @@ exports.sell = async (req, res) => {
 exports.seles = async (req, res) => {
   try {
     const data = await Seles.findAll({
-      attributes: ["sale_price"],
+      attributes: ["sale_price", "createdAt"],
       include: [
         {
           model: Product,
@@ -54,8 +54,7 @@ exports.seles = async (req, res) => {
   }
 };
 
-
 // Total profit of the product sold
 exports.profit = (req, res) => {
-
-}
+  
+};
