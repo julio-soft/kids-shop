@@ -5,12 +5,16 @@ const app = require("../server");
 const db = require("../src/models");
 const initial = require("../src/models/init");
 
-// TEST de INTEGRATION
+// INTEGRATION TEST
 
 beforeAll(() => {
   return db.sequelize.sync({ force: true }).then(async () => {
     await initial();
   });
+});
+
+afterAll(() => {
+  return db.sequelize.close();
 });
 
 describe("INTEGRATION TEST: Create Product of de Shop", () => {
