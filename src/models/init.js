@@ -122,7 +122,7 @@ async function initial_product() {
   await product_1.createImage({ url: "/imagen/1" });
   await product_1.createImage({ url: "/imagen/2" });
   await product_1.setCategory(category_2);
-  await product_1.addTags([tags_3, tags_5]);
+  await product_1.addTag([tags_3, tags_5]);
 
   let product_2 = await product.create({
     name: "Blue Blouse",
@@ -133,7 +133,7 @@ async function initial_product() {
 
   await product_2.createImage({ url: "/imagen/3" });
   await product_2.setCategory(category_1);
-  await product_2.addTags([tags_1, tags_2]);
+  await product_2.addTag([tags_1, tags_2]);
 
   let product_3 = await product.create({
     name: "Shoes",
@@ -145,7 +145,7 @@ async function initial_product() {
 
   await product_3.createImage({ url: "/imagen/4" });
   await product_3.setCategory(category_5);
-  await product_3.addTags([tags_3, tags_4]);
+  await product_3.addTag([tags_3, tags_4]);
 
   for (let i = 5; i <= 20; i++) {
 
@@ -159,7 +159,7 @@ async function initial_product() {
   
     await product_4.createImage({ url: `/imagen/${i}` });
     await product_4.setCategory(category_5);
-    await product_4.addTags([tags_3, tags_4]);
+    await product_4.addTag([tags_3, tags_4]);
   }
 
 }
