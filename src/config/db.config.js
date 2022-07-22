@@ -1,8 +1,8 @@
 module.exports = {
-    HOST: "localhost",
-    USER: "root",
-    PASSWORD: "Julio2019**",
-    DB: "kids",
+    HOST: process.env.MYSQL_HOST,
+    USER: process.env.MYSQL_USER,
+    PASSWORD: process.env.MYSQL_PASSWORD,
+    DB: process.env.MYSQL_DB,
     dialect: "mysql",
     pool: {
       max: 5,

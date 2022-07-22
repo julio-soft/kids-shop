@@ -1,10 +1,23 @@
-var express = require('express');
+const { authJwt } = require("../middleware");
+
+const authRoute = require("./auth.routes");
+const userRoute = require("./user.routes");
+const categoryRoute = require("./category.routes");
+const tagsRoute = require('./tags.routes')
+const ProductRoute = require('./product.routes')
+const SellRoute = require('./sell.routes')
+ 
+var express = require("express");
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  console.log('yess')
-  res.send({message: "Hola mundo"})
-});
+
+router.use("/auth", authRoute);
+router.use("/test", userRoute);
+
+router.use(authJwt.verifyToken) // verify that the user is authenticated
+router.use("/category", categoryRoute)
+router.use("/tag", tagsRoute)
+router.use("/product", ProductRoute)
+router.use("/sell", SellRoute)
 
 module.exports = router;

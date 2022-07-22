@@ -1,22 +1,17 @@
-const express = require('express');
+const express = require("express");
 const cors = require("cors");
-const logger = require('morgan');
+const logger = require("morgan");
+require("dotenv").config({path: __dirname + '/.env'});
 
 // express app
 const app = express();
 
-// routes
-const indexRouter = require('./src/routes/index');
-const usersRouter = require('./src/routes/users');
-
-
 var corsOptions = {
-    origin: "http://localhost:8081"
+  origin: "http://localhost:8081",
 };
 
-
 // middleware
-app.use(logger('dev'));
+// app.use(logger("dev"));
 app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -24,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // using routes
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+const routes = require("./src/routes");
+app.use("/apiv1", routes);
 
 module.exports = app;

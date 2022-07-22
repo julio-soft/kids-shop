@@ -1,0 +1,22 @@
+@host=http://localhost:3000/apiv1
+
+
+POST {{host}}/auth/signin
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin"
+}
+
+
+###
+
+
+POST {{host}}/auth/signin
+Content-Type: application/json
+
+{
+    "username": "user",
+    "password": "user"
+}
