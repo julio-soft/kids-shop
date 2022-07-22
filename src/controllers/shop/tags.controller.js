@@ -71,7 +71,7 @@ exports.update = async (req, res) => {
       });
 
     tag.set(req.body);
-    await Tag.save({ fields: ["name"] }); // save fields that can be mutated
+    await tag.save({ fields: ["name"] }); // save fields that can be mutated
 
     res.json({
       message: "Tag was updated successfully.",
