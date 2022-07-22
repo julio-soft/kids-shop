@@ -22,6 +22,7 @@ NOTA: Lea la sección EJECUTAR antes de abrir un problema.
 ```
 $ git clone https://github.com/julio-soft/kids-shop.git
 $ cd kids-shop
+$ npm install
 ```
 
 ### 2. Setup MySQL
