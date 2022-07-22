@@ -1,6 +1,6 @@
 # Kids-Shop
 
-## Table of contents
+## Tabla de contenido
 
 - [Introducción](#introducción)
 - [Ejecutar](#ejecutar)
