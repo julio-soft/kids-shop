@@ -211,6 +211,10 @@ exports.findAll = async (req, res) => {
   // Filter
   const filters = filterProduct(req.query);
 
+  // Filter Tags
+  const filterTags = {};
+  if (req.query?.tag) filterTags.name = { [Op.like]: `%${req.query?.tag}%` };
+
   // PAGUINATION
   let { page, pageSize, offset } = getPageOffset(req.query);
 
@@ -236,19 +240,22 @@ exports.findAll = async (req, res) => {
         through: {
           attributes: [],
         },
+        where: filterTags,
       },
     ],
+    group: ["products.sku"],
   };
 
   try {
     const data = await Product.findAndCountAll(condition);
 
-    let pageCount = getPageCount(data.count, pageSize);
+    let pageCount = getPageCount(data.count.length, pageSize);
     res.json({
       page: page,
       pageSize: pageSize,
       pageCount,
-      ...data,
+      count: data.count.length,
+      rows: data.rows,
     });
   } catch (error) {
     res.status(500).json({
@@ -333,7 +340,7 @@ exports.findNoStock = async (req, res) => {
 
   try {
     const data = await Product.findAll(condition);
-    res.json({soldOut: data});
+    res.json({ soldOut: data });
   } catch (error) {
     res.status(500).json({
       message:

@@ -5,6 +5,7 @@ const userRoute = require("./user.routes");
 const categoryRoute = require("./category.routes");
 const tagsRoute = require('./tags.routes')
 const ProductRoute = require('./product.routes')
+const SellRoute = require('./sell.routes')
 const ValRoute = require('./valoracion.routes')
  
 var express = require("express");
