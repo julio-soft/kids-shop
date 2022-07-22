@@ -4,7 +4,6 @@ const Op = db.Sequelize.Op;
 
 // CREATE and Save a new Valoracion
 exports.create = async (req, res) => {
-
   // Create a Valoracion
   const valoracion = {
     ...req.body,
@@ -16,7 +15,8 @@ exports.create = async (req, res) => {
     res.status(201).json(data);
   } catch (error) {
     res.status(500).json({
-      message: error.message || "Some error occurred while creating the Valoracion.",
+      message:
+        error.message || "Some error occurred while creating the Valoracion.",
     });
   }
 };
@@ -31,6 +31,27 @@ exports.findOne = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Error retrieving Valoracion with id=" + id,
+    });
+  }
+};
+
+// Find all Valoracion with sku of the product
+exports.findAllByProduct = async (req, res) => {
+  const sku = req.params.sku;
+
+  try {
+    const data = await Valoracion.findAll({
+      include: [
+        {
+          model: db.shop.product,
+          where: { sku: sku },
+        },
+      ],
+    });
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error retrieving Valoraciones with id=" + sku,
     });
   }
 };

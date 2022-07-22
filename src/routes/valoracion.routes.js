@@ -14,6 +14,7 @@ router.put("/", [authJwt.isModeratorOrAdmin], controller.update);
 router.patch("/", [authJwt.isModeratorOrAdmin], controller.update);
 
 router.get("/:id", controller.findOne);
+router.get("/byProduct/:sku", controller.findAllByProduct);
 
 // export
 module.exports = router;

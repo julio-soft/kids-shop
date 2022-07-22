@@ -1,4 +1,3 @@
-
 module.exports = (sequelize, Sequelize) => {
   // MODEL Product
   const product = sequelize.define("products", {
@@ -104,13 +103,8 @@ module.exports = (sequelize, Sequelize) => {
   image.belongsTo(product);
 
   // relacion product - valoracion
-  product.hasMany(valoracion, {
-    foreignKey: "productSku",
-    as: "valoracion",
-  });
-  valoracion.belongsTo(product, {
-    as: "valoracion",
-  });
+  product.hasMany(valoracion);
+  valoracion.belongsTo(product);
 
   return {
     product,
