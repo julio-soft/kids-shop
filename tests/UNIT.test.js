@@ -1,5 +1,6 @@
 // TEST UNITARIOS
 
+const app = require("../server");
 const db = require("../src/models");
 const initial = require("../src/models/init");
 const {
