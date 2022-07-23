@@ -27,7 +27,7 @@ exports.sell = async (req, res) => {
 exports.seles = async (req, res) => {
   try {
     const data = await Seles.findAll({
-      attributes: ["sale_price", "createdAt"],
+      //attributes: ["sale_price", "createdAt"],
       include: [
         {
           model: Product,

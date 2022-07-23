@@ -1,5 +1,5 @@
 const { authJwt, headers } = require("../middleware");
-const controller = require("../controllers/shop/tags.controller");
+const controller = require("../controllers/shop/valoracion.controller");
 
 var express = require("express");
 var router = express.Router();
@@ -9,13 +9,12 @@ router.use(headers.AllowHeader);
 
 // verb
 router.post("/", [authJwt.isModeratorOrAdmin], controller.create);
-router.delete("/all", [authJwt.isModeratorOrAdmin], controller.deleteAll);
 router.delete("/:id", [authJwt.isModeratorOrAdmin], controller.delete);
 router.put("/", [authJwt.isModeratorOrAdmin], controller.update);
 router.patch("/", [authJwt.isModeratorOrAdmin], controller.update);
 
 router.get("/:id", controller.findOne);
-router.get("/", controller.findAll);
+router.get("/byProduct/:sku", controller.findAllByProduct);
 
 // export
 module.exports = router;

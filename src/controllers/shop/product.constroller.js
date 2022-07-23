@@ -32,33 +32,43 @@ exports.create = async (req, res) => {
   try {
     // Save Product in the database
 
-    const data = await Product.create(product, {
-      fields: [
-        "name",
-        "price",
-        "stock",
-        "description",
-        "additional_information",
-      ],
-    });
+    const data = await Product.create(
+      product,
+      {
+        fields: [
+          "name",
+          "price",
+          "stock",
+          "description",
+          "additional_information",
+        ],
+      },
+      { transaction: t }
+    );
 
-    const categoryResponse = await Category.findByPk(category);
-    if (categoryResponse) data.setCategory(categoryResponse); // linking categories
+    const categoryResponse = await Category.findByPk(category, {
+      transaction: t,
+    });
+    if (categoryResponse)
+      await data.setCategory(categoryResponse, { transaction: t }); // linking categories
 
     if (images) {
       for (let index = 0; index < images.length; index++) {
         const element = images[index];
-        await data.createImage({ ...element }); // creating and linking image
+        await data.createImage({ ...element }, { transaction: t }); // creating and linking image
       }
     }
 
     if (tags) {
-      tagResponse = await Tag.findAll({
-        where: {
-          id: tags,
+      tagResponse = await Tag.findAll(
+        {
+          where: {
+            id: tags,
+          },
         },
-      });
-      data.addTag(tagResponse); // linking
+        { transaction: t }
+      );
+      await data.addTag(tagResponse, { transaction: t }); // linking
     }
 
     await t.commit();
@@ -98,6 +108,13 @@ exports.findOne = async (req, res) => {
         },
       ],
     });
+
+    if (data == null) {
+      res.status(400).json({
+        message: "Product with id=" + id + " does not exist",
+      });
+    }
+
     res.json(data);
   } catch (error) {
     res.status(500).json({
@@ -110,8 +127,14 @@ exports.findOne = async (req, res) => {
 exports.update = async (req, res) => {
   const id = req.body.sku;
 
+  const images = req.body.images;
+  const category = req.body.category;
+  const tags = req.body.tags;
+
+  const t = await sequelize.transaction();
+
   try {
-    const product = await Product.findByPk(id);
+    const product = await Product.findByPk(id, { transaction: t });
 
     if (product == null)
       return res.status(400).json({
@@ -121,12 +144,41 @@ exports.update = async (req, res) => {
     product.set(req.body);
     await product.save({
       fields: ["name", "price", "description", "additional_information"],
+      transaction: t,
     }); // save fields that can be mutated
+
+    const categoryResponse = await Category.findByPk(category, {
+      transaction: t,
+    });
+    if (categoryResponse)
+      await product.setCategory(categoryResponse, { transaction: t }); // linking categories
+
+    if (images) {
+      await product.removeImages(await product.getImages({ transaction: t }));
+      for (let index = 0; index < images.length; index++) {
+        const element = images[index];
+        await product.createImage({ ...element }, { transaction: t }); // creating and linking image
+      }
+    }
+
+    if (tags) {
+      tagResponse = await Tag.findAll(
+        {
+          where: {
+            id: tags,
+          },
+        },
+        { transaction: t }
+      );
+      await product.setTag(tagResponse, { transaction: t }); // linking
+    }
 
     res.json({
       message: "Product was updated successfully.",
     });
+    await t.commit();
   } catch (error) {
+    await t.rollback();
     res.status(500).json({
       message:
         error?.original?.message || error?.message || "Some error occurred.",
@@ -211,6 +263,10 @@ exports.findAll = async (req, res) => {
   // Filter
   const filters = filterProduct(req.query);
 
+  // Filter Tags
+  const filterTags = {};
+  if (req.query?.tag) filterTags.name = { [Op.like]: `%${req.query?.tag}%` };
+
   // PAGUINATION
   let { page, pageSize, offset } = getPageOffset(req.query);
 
@@ -236,19 +292,22 @@ exports.findAll = async (req, res) => {
         through: {
           attributes: [],
         },
+        where: filterTags,
       },
     ],
+    group: ["products.sku"],
   };
 
   try {
     const data = await Product.findAndCountAll(condition);
 
-    let pageCount = getPageCount(data.count, pageSize);
+    let pageCount = getPageCount(data.count.length, pageSize);
     res.json({
       page: page,
       pageSize: pageSize,
       pageCount,
-      ...data,
+      count: data.count.length,
+      rows: data.rows,
     });
   } catch (error) {
     res.status(500).json({
@@ -264,7 +323,10 @@ exports.findAllCount = async (req, res) => {
   // Filter
   const filters = filterProduct(req.query);
 
-  debugger;
+  // Filter Tags
+  const filterTags = {};
+  if (req.query?.tag) filterTags.name = { [Op.like]: `%${req.query?.tag}%` };
+
   const condition = {
     where: {
       ...filters,
@@ -285,6 +347,7 @@ exports.findAllCount = async (req, res) => {
         through: {
           attributes: [],
         },
+        where: filterTags,
       },
     ],
   };
@@ -307,7 +370,6 @@ exports.findNoStock = async (req, res) => {
   // Filter
   const filters = filterProduct(req.query);
 
-  debugger;
   const condition = {
     where: {
       stock: 0,
@@ -333,7 +395,7 @@ exports.findNoStock = async (req, res) => {
 
   try {
     const data = await Product.findAll(condition);
-    res.json({soldOut: data});
+    res.json({ soldOut: data });
   } catch (error) {
     res.status(500).json({
       message:

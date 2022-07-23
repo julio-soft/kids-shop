@@ -22,6 +22,7 @@ NOTA: Lea la sección EJECUTAR antes de abrir un problema.
 ```
 $ git clone https://github.com/julio-soft/kids-shop.git
 $ cd kids-shop
+$ npm install
 ```
 
 ### 2. Setup MySQL
@@ -60,7 +61,7 @@ La solución contiene dos commands. Puede ejecutar uno u otro según prefiera.
 $ npm run start
 ```
 
-- Ejecuta una batería de pruebas unitarias y de integración.
+- Ejecuta una batería de pruebas unitarias y de integración (en total 30 test). Las pruebas se ejecutan secuencialmente para asegurar que los test sean predecibles.
 ```
 $ npm run test
 ```
@@ -109,11 +110,37 @@ Todos los modelos se pueden encontra en la carpeta /src/models
 
 ### Sele Schema (Modelo de ventas):
 
-- sele_price (double)
+- sele_price (double)    
 
 NOTA: Para mas detalles como la relación entre los modelos ir a la definición de los modelos.
 
 ## API
+
+Toda la documentacion de la API REST se encuentra publicada en el siguiente link: 
+
+- https://documenter.getpostman.com/view/22248415/UzXKWJp1  
+
+En el siguiente link puede acceder al workspace publico de la API en POSTMAN:
+- https://www.postman.com/jcgoza97/workspace/kids-shop-api  
+
+
+IMPORTANTE: En cada petición enviada a la api debe proporcionar el token devuelto por el endpoint de autenticación; en el formato de una cabecera http la cual es:  x-access-token
+
+Ejemplo x-access-token: token
+
+### - Roles
+
+La solucion consta de 3 roles basicos: admin (Administrador del sistema), moderator (El editor del ecommerce) y user (Son los clientes registrados en el sistema). Se estableció el esquema de autorizacion basado solo en estos 3 roles para dar una solucion mas simple. 
+
+NOTA: Al levantar el proyecto estos roles se crean automaticamente en el sistema.
+
+### - Usarios
+
+Los siguientes usuarios son cargados a la BD automáticamente y pueden ser usados desde un inicio.
+
+- Usuario: admin Password: admin
+- Usuario: moderator Password: moderator
+- Usuario: user Password: user
 
 ## License
 

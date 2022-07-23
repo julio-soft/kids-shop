@@ -24,7 +24,9 @@ exports.create = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message:
-        error.message || "Some error occurred while creating the Category.",
+        error?.original?.message ||
+        error?.message ||
+        "Some error occurred while creating the Category.",
     });
   }
 };
