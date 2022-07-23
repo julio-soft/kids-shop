@@ -1,5 +1,5 @@
 @host=http://localhost:3000/apiv1
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjU4NDIzNDgzLCJleHAiOjE2NTg0MjUyODN9.dq8M2klnMSn11aA5Y6W2EjaUeN5EsbSOHQH6u00mOo0
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjU4NTE1OTQzLCJleHAiOjE2NTg1MTc3NDN9.nOpkwkx-FmitfTLqUQvA67Ut0B42lqyXVceBB0R2peE
 
 GET {{host}}/product
 ?page=1
@@ -27,9 +27,7 @@ x-access-token: {{token}}
 ###
 
 GET {{host}}/product/
-?page=1
-&pageSize=5
-&name=short
+?name=sho
 Content-Type: application/json
 x-access-token: {{token}}
 
@@ -41,6 +39,7 @@ x-access-token: {{token}}
 
 GET {{host}}/product/
 ?pageSize=10
+&page=2
 Content-Type: application/json
 x-access-token: {{token}}
 
@@ -73,6 +72,7 @@ x-access-token: {{token}}
 
 GET {{host}}/product/count/
 ?name=short
+?tag=boy
 Content-Type: application/json
 x-access-token: {{token}}
 
@@ -172,6 +172,15 @@ x-access-token: {{token}}
 ###
 
 DELETE  {{host}}/product/1
+Content-Type: application/json
+x-access-token: {{token}}
+
+{
+}
+
+###
+
+GET {{host}}/valoracion/byProduct/1
 Content-Type: application/json
 x-access-token: {{token}}
 

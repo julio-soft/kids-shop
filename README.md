@@ -116,7 +116,17 @@ NOTA: Para mas detalles como la relación entre los modelos ir a la definición 
 
 ## API
 
-IMPORTANTE: Cada peticion a endpoint proteguidos debe estar acompa
+Toda la documentacion de la API REST se encuentra publicada en el siguiente link: 
+
+- https://documenter.getpostman.com/view/22248415/UzXKWJp1  
+
+En el siguiente link puede acceder al workspace publico de la API en POSTMAN:
+- https://www.postman.com/jcgoza97/workspace/kids-shop-api  
+
+
+IMPORTANTE: En cada petición enviada a la api debe proporcionar el token devuelto por el endpoint de autenticación; en el formato de una cabecera http la cual es:  x-access-token
+
+Ejemplo x-access-token: token
 
 ### - Roles
 
@@ -126,8 +136,11 @@ NOTA: Al levantar el proyecto estos roles se crean automaticamente en el sistema
 
 ### - Usarios
 
-Los siguientes usuarios son cargados a la BD automáticamente al 
+Los siguientes usuarios son cargados a la BD automáticamente y pueden ser usados desde un inicio.
 
+- Usuario: admin Password: admin
+- Usuario: moderator Password: moderator
+- Usuario: user Password: user
 
 ## License
 
