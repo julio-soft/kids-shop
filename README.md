@@ -61,7 +61,7 @@ La solución contiene dos commands. Puede ejecutar uno u otro según prefiera.
 $ npm run start
 ```
 
-- Ejecuta una batería de pruebas unitarias y de integración.
+- Ejecuta una batería de pruebas unitarias y de integración (en total 30 test). Las pruebas se ejecutan secuencialmente para asegurar que los test sean predecibles.
 ```
 $ npm run test
 ```
@@ -110,11 +110,24 @@ Todos los modelos se pueden encontra en la carpeta /src/models
 
 ### Sele Schema (Modelo de ventas):
 
-- sele_price (double)
+- sele_price (double)    
 
 NOTA: Para mas detalles como la relación entre los modelos ir a la definición de los modelos.
 
 ## API
+
+IMPORTANTE: Cada peticion a endpoint proteguidos debe estar acompa
+
+### - Roles
+
+La solucion consta de 3 roles basicos: admin (Administrador del sistema), moderator (El editor del ecommerce) y user (Son los clientes registrados en el sistema). Se estableció el esquema de autorizacion basado solo en estos 3 roles para dar una solucion mas simple. 
+
+NOTA: Al levantar el proyecto estos roles se crean automaticamente en el sistema.
+
+### - Usarios
+
+Los siguientes usuarios son cargados a la BD automáticamente al 
+
 
 ## License
 
