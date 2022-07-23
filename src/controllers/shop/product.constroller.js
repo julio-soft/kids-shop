@@ -32,18 +32,25 @@ exports.create = async (req, res) => {
   try {
     // Save Product in the database
 
-    const data = await Product.create(product, {
-      fields: [
-        "name",
-        "price",
-        "stock",
-        "description",
-        "additional_information",
-      ],
-    }, { transaction: t });
+    const data = await Product.create(
+      product,
+      {
+        fields: [
+          "name",
+          "price",
+          "stock",
+          "description",
+          "additional_information",
+        ],
+      },
+      { transaction: t }
+    );
 
-    const categoryResponse = await Category.findByPk(category, { transaction: t });
-    if (categoryResponse) await data.setCategory(categoryResponse, { transaction: t }); // linking categories
+    const categoryResponse = await Category.findByPk(category, {
+      transaction: t,
+    });
+    if (categoryResponse)
+      await data.setCategory(categoryResponse, { transaction: t }); // linking categories
 
     if (images) {
       for (let index = 0; index < images.length; index++) {
@@ -53,11 +60,14 @@ exports.create = async (req, res) => {
     }
 
     if (tags) {
-      tagResponse = await Tag.findAll({
-        where: {
-          id: tags,
+      tagResponse = await Tag.findAll(
+        {
+          where: {
+            id: tags,
+          },
         },
-      }, { transaction: t });
+        { transaction: t }
+      );
       await data.addTag(tagResponse, { transaction: t }); // linking
     }
 
@@ -134,10 +144,14 @@ exports.update = async (req, res) => {
     product.set(req.body);
     await product.save({
       fields: ["name", "price", "description", "additional_information"],
+      transaction: t,
     }); // save fields that can be mutated
 
-    const categoryResponse = await Category.findByPk(category, { transaction: t });
-    if (categoryResponse) await product.setCategory(categoryResponse, { transaction: t }); // linking categories
+    const categoryResponse = await Category.findByPk(category, {
+      transaction: t,
+    });
+    if (categoryResponse)
+      await product.setCategory(categoryResponse, { transaction: t }); // linking categories
 
     if (images) {
       await product.removeImages(await product.getImages({ transaction: t }));
@@ -148,11 +162,14 @@ exports.update = async (req, res) => {
     }
 
     if (tags) {
-      tagResponse = await Tag.findAll({
-        where: {
-          id: tags,
+      tagResponse = await Tag.findAll(
+        {
+          where: {
+            id: tags,
+          },
         },
-      }, { transaction: t });
+        { transaction: t }
+      );
       await product.setTag(tagResponse, { transaction: t }); // linking
     }
 

@@ -19,7 +19,7 @@ exports.sell_product = async (id_product, id_user) => {
       transaction: t,
     });
 
-    const user = await User.findByPk(id_user);
+    const user = await User.findByPk(id_user, { transaction: t });
 
     if (user == null) {
       throw new Error(`Cannot sell Product to user id=${id_user}!`);
