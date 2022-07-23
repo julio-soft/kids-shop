@@ -146,6 +146,8 @@ async function initial_product() {
   await product_3.createImage({ url: "/imagen/4" });
   await product_3.setCategory(category_5);
   await product_3.addTag([tags_3, tags_4]);
+  await product_3.createValoracione({stars: 5, comment: "Excelente producto!"})
+  await product_3.createValoracione({stars: 4, comment: "Buen producto!"})
 
   for (let i = 5; i <= 20; i++) {
 
