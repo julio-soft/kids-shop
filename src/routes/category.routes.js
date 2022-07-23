@@ -9,6 +9,7 @@ router.use(headers.AllowHeader);
 
 // verb
 router.post("/", [authJwt.isModeratorOrAdmin], controller.create);
+router.delete("/all", [authJwt.isModeratorOrAdmin], controller.deleteAll);
 router.delete("/:id", [authJwt.isModeratorOrAdmin], controller.delete);
 router.put("/", [authJwt.isModeratorOrAdmin], controller.update);
 router.patch("/", [authJwt.isModeratorOrAdmin], controller.update);
