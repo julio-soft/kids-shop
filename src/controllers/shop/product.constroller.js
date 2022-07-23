@@ -46,19 +46,22 @@ exports.create = async (req, res) => {
       { transaction: t }
     );
 
+    // Save category
     const categoryResponse = await Category.findByPk(category, {
       transaction: t,
     });
     if (categoryResponse)
       await data.setCategory(categoryResponse, { transaction: t }); // linking categories
 
+    // save Image
     if (images) {
       for (let index = 0; index < images.length; index++) {
         const element = images[index];
         await data.createImage({ ...element }, { transaction: t }); // creating and linking image
       }
     }
-
+    
+    // Save image
     if (tags) {
       tagResponse = await Tag.findAll(
         {
@@ -72,7 +75,28 @@ exports.create = async (req, res) => {
     }
 
     await t.commit();
-    res.status(201).json(data);
+
+    let response = await Product.findByPk(data.sku, {
+      include: [
+        {
+          model: Image,
+        },
+        {
+          model: Category,
+          as: "category",
+          required: true,
+        },
+        {
+          model: Tag,
+          as: "tag",
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
+
+    res.status(201).json(response);
   } catch (error) {
     await t.rollback();
     res.status(500).json({
