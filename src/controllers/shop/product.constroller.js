@@ -98,6 +98,13 @@ exports.findOne = async (req, res) => {
         },
       ],
     });
+
+    if (data == null) {
+      res.status(400).json({
+        message: "Product with id=" + id + " does not exist",
+      });
+    }
+
     res.json(data);
   } catch (error) {
     res.status(500).json({
@@ -110,8 +117,14 @@ exports.findOne = async (req, res) => {
 exports.update = async (req, res) => {
   const id = req.body.sku;
 
+  const images = req.body.images;
+  const category = req.body.category;
+  const tags = req.body.tags;
+
+  const t = await sequelize.transaction();
+
   try {
-    const product = await Product.findByPk(id);
+    const product = await Product.findByPk(id, { transaction: t });
 
     if (product == null)
       return res.status(400).json({
@@ -123,10 +136,32 @@ exports.update = async (req, res) => {
       fields: ["name", "price", "description", "additional_information"],
     }); // save fields that can be mutated
 
+    const categoryResponse = await Category.findByPk(category, { transaction: t });
+    if (categoryResponse) await product.setCategory(categoryResponse, { transaction: t }); // linking categories
+
+    if (images) {
+      await product.removeImages(await product.getImages({ transaction: t }));
+      for (let index = 0; index < images.length; index++) {
+        const element = images[index];
+        await product.createImage({ ...element }, { transaction: t }); // creating and linking image
+      }
+    }
+
+    if (tags) {
+      tagResponse = await Tag.findAll({
+        where: {
+          id: tags,
+        },
+      }, { transaction: t });
+      await product.setTag(tagResponse, { transaction: t }); // linking
+    }
+
     res.json({
       message: "Product was updated successfully.",
     });
+    await t.commit();
   } catch (error) {
+    await t.rollback();
     res.status(500).json({
       message:
         error?.original?.message || error?.message || "Some error occurred.",
