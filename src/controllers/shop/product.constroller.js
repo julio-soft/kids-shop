@@ -323,7 +323,10 @@ exports.findAllCount = async (req, res) => {
   // Filter
   const filters = filterProduct(req.query);
 
-  debugger;
+  // Filter Tags
+  const filterTags = {};
+  if (req.query?.tag) filterTags.name = { [Op.like]: `%${req.query?.tag}%` };
+
   const condition = {
     where: {
       ...filters,
@@ -344,6 +347,7 @@ exports.findAllCount = async (req, res) => {
         through: {
           attributes: [],
         },
+        where: filterTags,
       },
     ],
   };
@@ -366,7 +370,6 @@ exports.findNoStock = async (req, res) => {
   // Filter
   const filters = filterProduct(req.query);
 
-  debugger;
   const condition = {
     where: {
       stock: 0,
