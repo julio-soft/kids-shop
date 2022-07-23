@@ -12,8 +12,7 @@
 
 Una API Rest que provee las funcionalidades básicas de un ecommerce usando Node js, Express js, y Sequelize.
 
-NOTA: Lea la sección EJECUTAR antes de abrir un problema.
-
+NOTA: Lea la sección EJECUTAR para iniciar el servicio correctamente.
 ## Ejecutar
 
 ### 1. Clonar repositorio
@@ -31,7 +30,7 @@ Para el desarrollo de la solución se utilizó MySQL como base de dato.
 
 ### 3. Cree el fichero .env
 
-Para ejecutar esta aplicación, debe configurar sus propias variables de entorno. Por razones de seguridad, algunas variables se ocultaron y se usaron como variables de entronos con la ayuda del paquete dotenv. Cree el fichero .env en la carpet raíz del proyecto. A continuación se muestran las variables que debe configurar para ejecutar la aplicación:
+Para ejecutar esta aplicación, debe configurar sus propias variables de entorno. Por razones de seguridad, algunas variables se ocultaron y se usaron como variables de entronos con la ayuda del paquete dotenv. **Cree el fichero .env en la carpet raíz del proyecto**. A continuación se muestran las variables que debe configurar para ejecutar la aplicación:
 
 - MYSQL_HOST: Dirección del host de la base de datos MySQL.
 
@@ -112,25 +111,28 @@ Todos los modelos se pueden encontra en la carpeta /src/models
 
 - sele_price (double)    
 
-NOTA: Para mas detalles como la relación entre los modelos ir a la definición de los modelos.
+NOTA: Para mas detalles, como la relación entre los modelos ir a la definición de los modelos.
 
 ## API
 
-Toda la documentacion de la API REST se encuentra publicada en el siguiente link: 
+Toda la **documentación** de la API REST se encuentra publicada en el siguiente link: 
 
 - https://documenter.getpostman.com/view/22248415/UzXKWJp1  
 
-En el siguiente link puede acceder al workspace publico de la API en POSTMAN:
+En el siguiente link puede acceder al **workspace publico** de la API en **POSTMAN**:
 - https://www.postman.com/jcgoza97/workspace/kids-shop-api  
 
 
-IMPORTANTE: En cada petición enviada a la api debe proporcionar el token devuelto por el endpoint de autenticación; en el formato de una cabecera http la cual es:  x-access-token
+**IMPORTANTE**: En cada petición enviada a la api debe proporcionar el token devuelto por el endpoint de autenticación; en el formato de una cabecera http la cual es:  **x-access-token**
 
 Ejemplo x-access-token: token
 
+Las rutas y sus configuraciones se encuentran en la carpeta ./src/routes/  
+Los controlladores para cada una de las rutas estan en la carpeta ./src/controllers
+
 ### - Roles
 
-La solucion consta de 3 roles basicos: admin (Administrador del sistema), moderator (El editor del ecommerce) y user (Son los clientes registrados en el sistema). Se estableció el esquema de autorizacion basado solo en estos 3 roles para dar una solucion mas simple. 
+La solucion consta de 3 roles basicos: admin (Administrador del sistema), moderator (El editor del ecommerce) y user (Son los clientes registrados en el sistema). Se estableció el esquema de autorización basado solo en estos 3 roles para dar una solución mas simple. 
 
 NOTA: Al levantar el proyecto estos roles se crean automaticamente en el sistema.
 
