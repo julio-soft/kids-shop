@@ -111,7 +111,7 @@ Todos los modelos se pueden encontra en la carpeta /src/models
 
 - sele_price (double)    
 
-NOTA: Para mas detalles, como la relación entre los modelos ir a la definición de los modelos.
+NOTA: Para mas detalles, como la relación entre los modelos, las reglas y validaciones ir a la definición de los modelos en /src/models.
 
 ## API
 
