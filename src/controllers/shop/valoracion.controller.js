@@ -12,11 +12,14 @@ exports.create = async (req, res) => {
   try {
     // Save Valoracion in the database
     const data = await Valoracion.create(valoracion);
+
     res.status(201).json(data);
   } catch (error) {
     res.status(500).json({
       message:
-        error.message || "Some error occurred while creating the Valoracion.",
+        error?.original?.message ||
+        error?.message ||
+        "Some error occurred while creating the Valoracion.",
     });
   }
 };

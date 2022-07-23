@@ -19,11 +19,14 @@ exports.create = async (req, res) => {
 
   try {
     // Save Tag in the database
-    const data = await Tag.create(Tag);
+    const data = await Tag.create(tag);
     res.status(201).json(data);
   } catch (error) {
     res.status(500).json({
-      message: error.message || "Some error occurred while creating the Tag.",
+      message:
+        error?.original?.message ||
+        error?.message ||
+        "Some error occurred while creating the Tags.",
     });
   }
 };
