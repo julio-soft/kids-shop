@@ -40,15 +40,15 @@ exports.create = async (req, res) => {
         "description",
         "additional_information",
       ],
-    });
+    }, { transaction: t });
 
-    const categoryResponse = await Category.findByPk(category);
-    if (categoryResponse) data.setCategory(categoryResponse); // linking categories
+    const categoryResponse = await Category.findByPk(category, { transaction: t });
+    if (categoryResponse) await data.setCategory(categoryResponse, { transaction: t }); // linking categories
 
     if (images) {
       for (let index = 0; index < images.length; index++) {
         const element = images[index];
-        await data.createImage({ ...element }); // creating and linking image
+        await data.createImage({ ...element }, { transaction: t }); // creating and linking image
       }
     }
 
@@ -57,8 +57,8 @@ exports.create = async (req, res) => {
         where: {
           id: tags,
         },
-      });
-      data.addTag(tagResponse); // linking
+      }, { transaction: t });
+      await data.addTag(tagResponse, { transaction: t }); // linking
     }
 
     await t.commit();
